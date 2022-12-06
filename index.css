@@ -2,8 +2,12 @@ body {
     background-color: red;
 }
 h1 {
+<<<<<<< HEAD
     color: #0dcaf0;
 }
 ul {
     list-style: lower-roman;
+=======
+    color: #0c63e4;
+>>>>>>> js
 }
