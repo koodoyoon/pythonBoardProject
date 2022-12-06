@@ -1,3 +1,9 @@
 body {
     background-color: red;
 }
+h1 {
+    color: #0dcaf0;
+}
+ul {
+    list-style: lower-roman;
+}
