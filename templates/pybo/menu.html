@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+    <title>Title</title>
+</head>
+<body>
+    <!-- container -->
+    <div class="container">
+        <!-- 제목 -->
+        <div class="text-start mb-5">
+            <h2>임시 메뉴</h2>
+        </div>
+        <!-- 제목 end -->
+        <!-- 검색, 버튼 -->
+        <div class="d-grid gap-2 d-md-flex justify-content-end">
+            <!-- 검색 form -->
+            <form action="#" class="col-sm-11 col-md-11 col-lg-11 text-center">
+                <select class="" style="height : 30px">
+                  <option selected value="">전체</option>
+                  <option value="10">제목</option>
+                  <option value="20">내용</option>
+                  <option value="30">작성자</option>
+                </select>
+                <input type="text" class="" placeholder="검색" style="height : 30px">
+                <select class="" style="height : 30px">
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                </select>
+            </form>
+            <!-- 검색 form end -->
+
+        </div>
+        <!-- 검색, 버튼 end -->
+    </div>
+    <!-- table -->
+    <div class="table-responsive container" style="margin-top : 20px;">
+        <table class="table table-striped table-bordered table-sm">
+          <thead>
+            <tr class="table-dark">
+              <th scope="col" class="text-center">No.</th>
+              <th scope="col" class="text-center">제목</th>
+              <th scope="col" class="text-center">설명</th>
+              <th scope="col" class="text-center">작성일</th>
+            </tr>
+          </thead>
+          <tbody>
+                {% if question_list %}
+                    {% for question in question_list %}
+            <tr>
+                        {# http://127.0.0.1:8000/pybo/1 #}
+                            <th scope="row">{{question.id}}</th>
+                            <td><a href="{% url 'pybo:index' %}">질문 목록</a></td>
+                            <td>bootstrap 목록 템플릿</td>
+                            <td>{{question.create_date|date:"Y-m-d"}}</td>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="99">질문이 없습니다.</td>
+                    </tr>
+                {% endif %}
+            </tr>
+          </tbody>
+    </table>
+    </div>
+    <!-- table end -->
+    <!-- container end -->
+    {% csrf_token %}
+</body>
+</html>
