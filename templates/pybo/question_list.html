@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
-    <title>Title</title>
-</head>
-<body>
+    {% extends 'base.html' %}
+    {% block content %}
     <div class="table-responsive container" style="margin-top : 20px;">
         <table class="table table-striped table-bordered table-sm">
           <thead>
@@ -38,7 +30,6 @@
             </tr>
           </tbody>
     </table>
-    </div>
     {% csrf_token %}
-</body>
-</html>
+    </div>
+    {% endblock %}
