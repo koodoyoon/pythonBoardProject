@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.utils import timezone
 from .models import Question
-from .forms import QuestionForm
+from .forms import QuestionForm, AnswerForm
+import logging
 
 
 # menu
@@ -15,7 +16,7 @@ def question_create(request):
     ''' 질문 등록 '''
     print('request.method = {}'.format(request.method))
     if request.method == 'POST':
-        print('question_create post')
+        logging.info('question_create post')
         # 저장
         form = QuestionForm(request.POST)  # request.POST 데이터 (subject, content 자동 생성)
 
@@ -26,8 +27,8 @@ def question_create(request):
             return redirect('pybo:index')
     else:
         form = QuestionForm()
-        context = {'form': form}
-        return render(request, 'pybo/question_form.html', {'form': form})
+    context = {'form': form}
+    return render(request, 'pybo/question_form.html', {'form': form})
 
 
 # register
@@ -43,11 +44,24 @@ def boot_list(request):
 
 
 def answer_create(request, question_id):
+    ''' 답변 등록 '''
     question = get_object_or_404(Question, pk=question_id)
-    # Question 과 Answer 처럼 서로 연결되어 있는 경우
-    # 연결 모델명_set 연결데이터를 조회 할 수 있다.
-    question.answer_set.create(content=request.POST.get('content'), create_date=timezone.now())
-    return redirect('pybo:detail', question_id=question_id)
+
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.create_date = timezone.now()
+            answer.question = question
+            answer.save()
+            return redirect('pybo:detail', question_id=question_id)
+    else:
+        return HttpResponseNotAllowed('Post만 가능 합니다.')
+
+    # form validation
+    context = {'question': question, 'form': form}
+    return render(request, 'pybo/question_detail.html', context)
 
 
 def detail(request, question_id):
@@ -55,15 +69,17 @@ def detail(request, question_id):
     # print(question_id)
     # question = Question.objects.get(id=question_id)
     question = get_object_or_404(Question, pk=question_id)
-    print(question)
+    logging.info(question)
     context = {'question': question}
-    print(context)
+    logging.info(context)
     return render(request, 'pybo/question_detail.html', context)
 
 
 # Create your views here.
 def index(request):
     ''' question 목록 '''
+    logging.info('index 레벨로 출력')
+    # print('index 레벨로 출력')
     question_list = Question.objects.order_by('create_date')  # order by 에 -가 붙으면 desc, 안붙으면 asc
     context = {'question_list': question_list}
     return render(request, 'pybo/question_list.html', context)
