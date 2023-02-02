@@ -3,7 +3,44 @@ from django.http import HttpResponse, HttpResponseNotAllowed
 from django.utils import timezone
 from .models import Question
 from .forms import QuestionForm, AnswerForm
+from bs4 import BeautifulSoup
+import requests
 import logging
+
+
+def crawling_cgv(request):
+    ''' cgv 무비차트 '''
+    url = 'http://www.cgv.co.kr/movies/?lt=1&ft=0'
+    response = requests.get(url)
+    print(response.status_code)
+    context = {}
+    if 200 == response.status_code:
+        html = response.text
+        soup = BeautifulSoup(html, 'html.parser')
+        title = soup.select('div.box-contents strong.title')
+        reserve = soup.select('div.score strong.percent span')
+        poster = soup.select('span.thumb-image img')
+
+        title_list = []
+        reserve_list = []
+        poster_list = []
+        for page in range(0, 7, 1):
+            posterImg = poster[page]
+            imgUrlPath = posterImg.get('src')
+            # reserve_list[page] = reserve[page].getText()
+            title_list.append(title[page].getText())
+            reserve_list.append(reserve[page].getText())
+            poster_list.append(imgUrlPath)
+            print('title[page] = {}, 예매율 = {}, 이미지경로 = {}'
+                  .format(title[page].getText(), reserve[page].getText(), imgUrlPath))
+
+        context = {'title': title_list, 'reserve': reserve_list, 'poster': poster_list}
+
+    else:
+        print('접속 오류')
+    pass
+
+    return render(request, 'pybo/crawling_cgv.html', context)
 
 
 # menu

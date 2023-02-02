@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
-    <title>Title</title>
-</head>
-<body>
+    {% extends 'base.html' %}
+    {% block content %}
     <!-- container -->
     <div class="container">
         <!-- 제목 -->
         <div class="text-start mb-5">
-            <h2>질문 목록</h2>
+            <h2 class="border-bottom py-2">질문 목록</h2>
         </div>
         <!-- 제목 end -->
         <!-- button -->
@@ -47,5 +38,4 @@
     </div>
     <!-- container end -->
     {% csrf_token %}
-</body>
-</html>
+    {% endblock %}
