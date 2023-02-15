@@ -28,4 +28,6 @@ urlpatterns = [
     path('crawling/cgv/', views.crawling_cgv, name='crawling_cgv'),
     path('question/modify/<int:question_id>/', views.question_modify, name='question_modify'),
     path('question/delete/<int:question_id>/', views.question_delete, name='question_delete'),
+    path('board/', views.board, name='board'),
+    path('board/reg/', views.board_reg, name='board_reg'),
 ]

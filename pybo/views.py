@@ -9,8 +9,10 @@ from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
-from .forms import QuestionForm, AnswerForm
-from .models import Question, Answer
+from .forms import QuestionForm, AnswerForm, BoardForm
+from .models import Question, Answer, Post, Board
+
+
 # ctrl + opt + o
 
 
@@ -54,38 +56,6 @@ def crawling_cgv(request):
     else:
         print('접속오류 response.status_code:{}'.format(response.status_code))
     return render(request, 'pybo/crawling_cgv.html', context)
-
-
-# @login_required(login_url='common:login')
-# def answer_modify(request, answer_id):
-#     logging.info('1. answer_modify = {}'.format(answer_id))
-#     # 1. answer id에 해당되는 데이터 조회
-#     # 2. 수정 권한 체크 : 권한이 없는 경우 메시지 전달
-#     # 3. POST : 수정
-#     # 3. GET : 수정 form 전달
-#
-#     # 1.
-#     answer = get_object_or_404(Answer, pk=answer_id)
-#     # 2.
-#     if request.user != answer.author:
-#         messages.error(request, '수정 권한이 없습니다.')
-#         return redirect('pybo:detail', question_id=answer.question.id)
-#
-#     if request.method == "POST":  # 수정
-#         form = AnswerForm(request.POST, instance=answer)
-#         if form.is_valid():
-#             answer = form.save(commit=False)
-#             answer.modify_date = timezone.now()
-#             answer.save()
-#             return redirect('pybo:detail', question_id=answer.question.id)
-#     else:  # 수정 form 의 template
-#         form = AnswerForm(instance=answer)
-#
-#     context = {'answer':answer, 'form':form}
-#     return render(request, 'pybo')
-#
-#     pass
-
 
 
 def question_create(request):
@@ -198,6 +168,27 @@ def detail(request, question_id):
     logging.info('2. question:{}'.format(question))
     context = {'question': question}
     return render(request, 'pybo/question_detail.html', context)
+
+
+def board_reg(request):
+    if request.method == 'POST':
+        form = BoardForm(request.POST)
+        if form.is_valid():
+            board = form.save(commit=False)
+            board.create_date = timezone.now()
+            board.author = request.user
+
+            board.save()
+            return redirect('pybo:index')
+    else:
+        form = BoardForm()
+    context = {'form': form}
+    return render(request, 'pybo/board_reg.html', context)
+
+
+def board(request):
+    boardList = Board.objects.all()
+    return render(request, 'pybo/board.html', {'boardList': boardList})
 
 
 def index(request):

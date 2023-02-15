@@ -33,3 +33,21 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.question
+
+
+class Post(models.Model):
+    subject = models.CharField(max_length=50);
+    content = models.TextField()
+
+    def __str__(self):
+        return self.subject
+
+
+class Board(models.Model):
+    subject = models.CharField(max_length=50)
+    content = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    create_date = models.DateTimeField()
+
+    def __str__(self):
+        return self.subject

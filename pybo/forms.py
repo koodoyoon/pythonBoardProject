@@ -8,7 +8,7 @@ since 2023-01-09
 """
 
 from django import forms
-from pybo.models import Question, Answer
+from pybo.models import Question, Answer, Board
 
 
 class AnswerForm(forms.ModelForm):
@@ -19,6 +19,18 @@ class AnswerForm(forms.ModelForm):
 
         labels = {
             'content': '답변내용'
+        }
+
+
+class BoardForm(forms.ModelForm):
+    class Meta:
+        model = Board
+
+        fields = ['subject', 'content']
+
+        labels = {
+            'subject': '제목',
+            'content': '내용',
         }
 
 
