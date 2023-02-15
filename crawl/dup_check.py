@@ -11,15 +11,17 @@ import csv
 
 def dup_check(csv_file_path):
     list = []
-    count = 0
     with open(csv_file_path, 'r', newline='') as f:
         reader = csv.reader(f)
         for row in reader:
             if row not in list:
                 list.append(row)
-            else:
-                count += 1
-    print(count)
+
+        print("-"*50)
+        print("{}".format(csv_file_path))
+        print("original len: {}".format(reader.line_num))
+        print("changed len: {}".format(len(list)))
+        print("-"*50)
 
     with open(csv_file_path, 'w', newline='') as f:
         writer = csv.writer(f)
@@ -27,7 +29,7 @@ def dup_check(csv_file_path):
 
 
 def main():
-    file_dir = "/Users/koodoyoon/Desktop/crawl_data/"
+    file_dir = "/Users/koodoyoon/Desktop/csv_doyoon/"
     file_list = ["connection.csv", "image.csv", "option_product.csv", "product.csv"]
     for file_name in file_list:
         file_path = file_dir+file_name

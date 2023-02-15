@@ -116,9 +116,17 @@ category_num = {
 
 
 def csv_save(csv_path, row):
+    # print(row)
+    # return
     with open(csv_path, 'a', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(row)
+
+
+def img_save(img_path, content):
+    # return
+    with open(img_path, 'wb') as f:
+        f.write(content)
 
 
 class Crawler:
@@ -130,9 +138,9 @@ class Crawler:
         # 상품과 연결될 카테고리
         self.category = ['키즈룸', '수납장']
         # csv 파일이 저장될 경로
-        self.csv_path = "/Users/koodoyoon/Desktop/crawl_data/"
+        self.csv_path = "/Users/koodoyoon/Desktop/csv_doyoon/"
         # 이미지 파일이 저장될 경로
-        self.img_path = '/Users/koodoyoon/Desktop/iloom/'
+        self.img_path = '/Users/koodoyoon/Desktop/img_doyoon/'
 
     def parse_html(self, url):
         soup = None
@@ -174,7 +182,15 @@ class Crawler:
         product_name = box_product_info.select_one("div.productNm").text.strip()
 
         # 상품 가격
-        product_price_txt = box_product_info.select_one("div.price").text.strip()[:-1]
+        product_price_box = box_product_info.select_one("div.price")
+        product_price_span = product_price_box.select("span")
+        if product_price_span:
+            # 할인중
+            print("할인중인 상품")
+            product_price_txt = product_price_span[0].text.strip()[:-1].strip()
+        else:
+            # 보통 가격
+            product_price_txt = product_price_box.text.strip()[:-1]
         # 판매가
         product_sp = int(product_price_txt.replace(",", ""))
         # 원가
@@ -220,8 +236,8 @@ class Crawler:
 
                 # 이미지 저장
                 img_path = self.img_path + file_name
-                with open(img_path, 'wb') as f:
-                    f.write(requests.get(img_url).content)
+                content = requests.get(img_url).content
+                img_save(img_path, content)
 
                 # 이미지와 상품 연결
                 img_csv_path = self.csv_path + "image.csv"
@@ -266,6 +282,11 @@ class Crawler:
             self.category.append(category_name)
             print(self.category)
             self.investigate_page(url, 1)
+
+    def test(self):
+        # url = "https://www.iloom.com/product/detail.do?productCd=HCS824V"
+        self.product_info_parse("HB722501")
+        self.product_info_parse("HCS824V")
 
 
 def main():

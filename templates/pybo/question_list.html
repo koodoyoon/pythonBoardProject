@@ -1,4 +1,5 @@
     {% extends 'base.html' %}
+    {% load pybo_filter %}
     {% block content %}
     <div class="table-responsive container" style="margin-top : 20px;">
           <div class="text-start mb-5">
@@ -12,30 +13,71 @@
             <tr class="table-dark">
               <th scope="col" class="text-center">No.</th>
               <th scope="col" class="text-center">제목</th>
-              <th scope="col" class="text-center">작성자</th>
               <th scope="col" class="text-center">작성일</th>
-              <th scope="col" class="text-center">조회수</th>
             </tr>
           </thead>
           <tbody>
-                {% if question_list %}
-                    {% for question in question_list %}
+            {% if question_list %}
+            {% for question in question_list %}
             <tr>
-                        {# http://127.0.0.1:8000/pybo/1 #}
-                            <th scope="row">{{forloop.counter}}</th>
-                            <td><a href="{% url 'pybo:detail' question.id %}">{{question.subject}}</a></td>
-                            <td>{{question.id}}</td>
-                            <td>{{question.create_date|date:"Y-m-d"}}</td>
-                            <td>views</td>
-                    {% endfor %}
-                {% else %}
+                <td class="text-center">{{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1   }}</td>
+                <td class="text-center"><a href="{% url 'pybo:detail' question.id %}">{{question.subject}}</a></td>
+                <td class="text-center">{{question.create_date|date:"Y-m-d"}}</td>
+            </tr>
+            {% endfor %}
+                    {% else %}
                     <tr>
                         <td colspan="99">질문이 없습니다.</td>
                     </tr>
-                {% endif %}
-            </tr>
+            {% endif %}
+
           </tbody>
     </table>
     {% csrf_token %}
+
+        <!-- 페이징 처리 -->
+        <ul class="pagination justify-content-center">
+ 	 	 	 	          <!--이전 페이지 -->
+            {% if question_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ question_list.previous_page_number }}">&laquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+ 	 	 	 	<a class="page-link" aria-disabled="true" href="#">&laquo;</a>
+            </li>
+            {% endif%}
+            <!--이전 페이지 end------------------------>
+            <!--페이지 리스트 paginator.page_range-->
+            {% for page_number in question_list.paginator.page_range%}
+            <!--현재 선택 페이지와 나머지 -->
+            <!-- 페이지 번호가 현재 페이지 기누으로 좌우 5개씩 보이도록 처리-->
+            {% if page_number >= question_list.number|add:-5 and page_number <= question_list.number|add:5 %}
+            {% if page_number == question_list.number %}
+            <li class="page-item active" aria-current="page">
+ 	 	 	 	<a class="page-link" href="#">{{page_number}}</a>
+            </li>
+           {% else %}
+            <li class="page-item active" aria-current="page">
+ 	 	 	 	<a class="page-link" href="?page={{page_number}}">{{page_number}}</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            <!--페이지 리스트 end-->
+            <!--다음 페이지 -->
+            {% if question_list.has_next %}
+            <li class="page-item">
+ 	 	 	 	<a class="page-link" href="?page={{ question_list.next_page_number }}">&raquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+ 	 	 	 	<a class="page-link" tabindex="-1" aria-disabled="true" href="#">&raquo;</a>
+            </li>
+            {% endif %}
+            <!--다음 페이지 end-->
+        </ul>
+        <!-- 페이징 처리 end -->
+
     </div>
     {% endblock %}
